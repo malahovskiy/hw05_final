@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+  Пост "{{ post.text|truncatechars:30 }}"
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-3 border border-5 rounded bg-light">        
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item bg-light">
+            Дата публикации: {{ post.pub_date|date:'d E Y' }}
+          </li>
+          <li class="list-group-item bg-light">
+            Группа:
+            {% if post.group %}
+              <a href={% url "posts:group_list" post.group.slug %}>
+                {{ post.group.title }}
+              </a>
+            {% else %}
+              Группы нет
+            {% endif%}
+          </li>
+          <li class="list-group-item bg-light">
+            Автор: 
+            <a href={% url "posts:profile" post.author.username %}>
+              {{ post.author.get_full_name}}
+            </a>
+          </li>
+          <li class="list-group-item bg-light">
+            Всего постов автора: <span>{{ post_count }}</span>
+          </li>
+          {% if post.author == request.user %} 
+          <li class="list-group-item bg-light ml-1">     
+            <a class="btn btn-primary" href={% url 'posts:post_edit' post.pk %}>
+              редактировать запись
+            </a>
+          </li>
+          {% endif %}  
+        </ul>                
+      </div>
+      <div class="col-9 border border-5 bg-light ">
+        <ul class="list-group list-group-flush bg-light">
+            {% if post.image %}
+              {% thumbnail post.image "1920x1080" format="PNG" upscale=True as im %}
+                <img class="list-group-item my-2 bg-light" src="{{ im.url }}">
+              {% endthumbnail %}        
+            {% endif %}          
+          <div class='card-text list-group-item bg-light'>
+            {{ post.text|linebreaksbr }}
+          </div>
+          <div class='card-text list-group-item bg-light'>
+            <h5>Комментарии</h3>
+            {% include "posts/add_comment.html" %}
+          </div>
+        </ul> 
+      </div>     
+    </div class="row">
+  </div class="container">
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}
+  {{ title }}
+{% endblock %}
+{% block content %}
+  <div class="container ">
+    <div class="row">
+      <h1>Вот что я умею</h1>
+      <aside class="col-12 col-md-3 border border-5 rounded bg-light">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item bg-light">Python</li>
+          <li class="list-group-item bg-light">Django</li>
+        </ul>
+      </aside>
+      <article class="col-12 col-md-9 border border-5 rounded bg-light">
+        <p>{{ text }}</p>
+      </article>
+    </div>
+  </div>
+{% endblock %}

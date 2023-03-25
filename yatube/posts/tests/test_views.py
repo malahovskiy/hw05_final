@@ -9,8 +9,6 @@ from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.core.cache import cache
-import time
-from django.core.cache.utils import make_template_fragment_key
 
 User = get_user_model()
 
@@ -57,8 +55,7 @@ class PostsPagesTests(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
-        cache.delete(make_template_fragment_key('index_posts'))
-        cache.delete(make_template_fragment_key('follow_posts'))
+        cache.clear()
 
     def setUp(self):
         self.guest = Client()
@@ -257,7 +254,6 @@ class PostsPagesTests(TestCase):
 
     def test_cache_index(self):
         """Тест кэширования главной страницы"""
-        cache_time: int = 20  # Время хранения кэша в секундах
         url = reverse('posts:index')
         response_first = self.guest.get(url)
         empty_content = response_first.content
@@ -268,7 +264,7 @@ class PostsPagesTests(TestCase):
         response_second = self.guest.get(url)
         cached_content = response_second.content
         self.assertEqual(empty_content, cached_content)
-        time.sleep(cache_time)
+        cache.clear()
         response_third = self.guest.get(url)
         new_content = response_third.content
         self.assertNotEqual(cached_content, new_content)

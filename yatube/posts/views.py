@@ -46,6 +46,8 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
+    """Функция обработки запроса к странице пользователя"""
+
     template = 'posts/profile.html'
     author = User.objects.get(username=username)
     posts = author.posts.select_related('author')
@@ -68,6 +70,8 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
+    """Функция обработки запроса к странице поста"""
+
     template = 'posts/post_detail.html'
     post = Post.objects.get(pk=post_id)
     author = User.objects.get(username=post.author)
@@ -83,6 +87,8 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
+    """Функция обработки запроса к странице создания поста"""
+
     form = PostForm(request.POST or None, files=request.FILES or None)
     if form.is_valid():
         post = form.save(commit=False)
@@ -99,6 +105,8 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
+    """Функция обработки запроса к странице редактирования поста"""
+
     is_edit: bool = True
     post = get_object_or_404(Post, id=post_id)
 
@@ -124,6 +132,8 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
+    """Функция обработки запроса к форме добавления комментария"""
+
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     if form.is_valid():
@@ -138,6 +148,8 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
+    """Функция обработки запроса к странице подписок"""
+
     template = 'posts/follow.html'
     follower = User.objects.get(username=request.user)
     posts = Post.objects.filter(
@@ -155,6 +167,8 @@ def follow_index(request):
 
 @login_required
 def profile_follow(request, username):
+    """Функция обработки запроса на подписку"""
+
     user = User.objects.get(username=request.user)
     author = User.objects.get(username=username)
     if author != user:
@@ -168,6 +182,8 @@ def profile_follow(request, username):
 
 @login_required
 def profile_unfollow(request, username):
+    """Функция обработки запроса на отписку"""
+
     user = User.objects.get(username=request.user)
     author = User.objects.get(username=username)
     Follow.objects.filter(

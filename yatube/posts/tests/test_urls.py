@@ -1,4 +1,3 @@
-# posts/tests/test_urls.py
 from django.test import TestCase, Client
 from django.contrib.auth import get_user_model
 from posts.models import Post, Group
@@ -21,7 +20,6 @@ class StaticURLTests(TestCase):
             description='Тестовое описание'
         )
 
-        # Создадим запись в БД для проверки доступности адреса task/test-slug/
         cls.post = Post.objects.create(
             text='Test',
             author=cls.PostAuthor,
@@ -29,8 +27,6 @@ class StaticURLTests(TestCase):
         )
 
     def setUp(self):
-        # Устанавливаем данные для тестирования
-        # Создаём экземпляр клиента. Он неавторизован.
         self.guest = Client()
         self.post_author = Client()
         self.post_author.force_login(self.PostAuthor)

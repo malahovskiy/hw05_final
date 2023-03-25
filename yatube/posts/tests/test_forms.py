@@ -1,4 +1,3 @@
-# deals/tests/tests_form.py
 import shutil
 import tempfile
 from django.conf import settings
@@ -21,7 +20,6 @@ class PostCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # Создание необхоимых для тестов записей в БД
         cls.TestUser = User.objects.create_user(username='user')
         cls.TestGroup = Group.objects.create(
             title='Тестовая группа',
@@ -57,7 +55,7 @@ class PostCreateFormTests(TestCase):
         self.authorized_client.force_login(self.TestUser)
 
     def test_create_post_for_user(self):
-        # Проверка работы формы сознания поста для пользователя
+        """Проверка работы формы сознания поста для пользователя"""
         post_count = Post.objects.count()
         uploaded = SimpleUploadedFile(
             name='img_origin.gif',
@@ -91,7 +89,7 @@ class PostCreateFormTests(TestCase):
         )
 
     def test_create_post_for_guest(self):
-        # Проверка работы формы сознания поста для гостя
+        """Проверка работы формы сознания поста для гостя"""
         post_count = Post.objects.count()
         uploaded = SimpleUploadedFile(
             name='img_origin.gif',
@@ -122,7 +120,7 @@ class PostCreateFormTests(TestCase):
         )
 
     def test_edit_post_for_user(self):
-        # Проверка работы формы редактирования для пользователя
+        """Проверка работы формы редактирования для пользователя"""
         uploaded = SimpleUploadedFile(
             name='img_origin.gif',
             content=self.img_origin,
@@ -168,7 +166,7 @@ class PostCreateFormTests(TestCase):
         )
 
     def test_edit_post_for_guest(self):
-        # Проверка работы формы редактирования для гостя
+        """Проверка работы формы редактирования для гостя"""
         uploaded = SimpleUploadedFile(
             name='img_origin.gif',
             content=self.img_origin,
@@ -215,7 +213,6 @@ class CommentCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        # Создание необхоимых для тестов записей в БД
         cls.TestUser = User.objects.create_user(username='user')
         cls.TestGroup = Group.objects.create(
             title='Тестовая группа',

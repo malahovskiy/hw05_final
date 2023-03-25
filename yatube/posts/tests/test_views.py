@@ -336,6 +336,11 @@ class PaginatorViewsTest(TestCase):
     def setUp(self):
         self.user = Client()
 
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()        
+        cache.clear()
+
     def test_first_page_contains_ten_records(self):
         response = self.user.get(reverse('posts:index'))
         # Проверка: количество постов на первой странице равно 10.

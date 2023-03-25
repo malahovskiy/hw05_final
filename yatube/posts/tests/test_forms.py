@@ -3,6 +3,7 @@ import tempfile
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
+from django.core.cache import cache
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
@@ -48,6 +49,7 @@ class PostCreateFormTests(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        cache.clear()
 
     def setUp(self):
         self.guest_client = Client()

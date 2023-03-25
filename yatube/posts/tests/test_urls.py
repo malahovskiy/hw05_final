@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from posts.models import Post, Group
 from django.urls import reverse
 from http import HTTPStatus
+from django.core.cache import cache
 
 User = get_user_model()
 
@@ -32,6 +33,11 @@ class StaticURLTests(TestCase):
         self.post_author.force_login(self.PostAuthor)
         self.random_user = Client()
         self.random_user.force_login(self.RandomUser)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cache.clear()
 
     def test_urls_guest(self):
         '''Тест страниц доступных гостю'''

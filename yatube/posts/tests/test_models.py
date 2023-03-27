@@ -1,6 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from ..models import Group, Post
+import shutil
+import tempfile
+from django.conf import settings
+from django.core.cache import cache
+
+TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 User = get_user_model()
 
@@ -19,6 +25,12 @@ class PostModelTest(TestCase):
             author=cls.user,
             text='Тестовый пост длинной больше 15 символов',
         )
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
+        cache.clear()
 
     def test_models_correct_verbose_name(self):
         post = PostModelTest.post

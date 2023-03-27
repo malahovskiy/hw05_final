@@ -4,8 +4,13 @@ from posts.models import Post, Group
 from django.urls import reverse
 from http import HTTPStatus
 from django.core.cache import cache
+import shutil
+import tempfile
+from django.conf import settings
 
 User = get_user_model()
+
+TEMP_MEDIA_ROOT = tempfile.mkdtemp(dir=settings.BASE_DIR)
 
 
 class StaticURLTests(TestCase):
@@ -37,6 +42,7 @@ class StaticURLTests(TestCase):
     @classmethod
     def tearDownClass(cls):
         super().tearDownClass()
+        shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
         cache.clear()
 
     def test_urls_guest(self):

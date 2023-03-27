@@ -57,7 +57,7 @@ def profile(request, username):
     posts_count = paginator.count
     following = (
         request.user.is_authenticated
-        and Follow.objects.filter(user=request.user).filter(author=author)
+        and Follow.objects.filter(user=request.user).filter(author=author).exists()
     )
 
     context = {
@@ -98,7 +98,8 @@ def post_create(request):
     form = PostForm()
     context = {
         'form': form,
-        'group_list': Group.objects.all()
+        'group_list': Group.objects.all(),
+        'is_edit': False,
     }
     return render(request, 'posts/create_post.html', context)
 
@@ -142,9 +143,6 @@ def add_comment(request, post_id):
         comment.post = post
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
-
-# posts/views.py
-
 
 @login_required
 def follow_index(request):

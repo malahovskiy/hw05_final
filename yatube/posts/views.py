@@ -13,7 +13,7 @@ User = get_user_model()
 POSTS_COUNT: int = 10
 
 
-@cache_page(20, key_prefix='index_posts')
+# @cache_page(20, key_prefix='index_posts')
 def index(request):
     """Функция обработки запроса к главной странице"""
 

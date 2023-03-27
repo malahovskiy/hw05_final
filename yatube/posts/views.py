@@ -6,14 +6,14 @@ from django.contrib.auth import get_user_model
 from .forms import PostForm, CommentForm
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
-# from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import cache_page
 
 User = get_user_model()
 
 POSTS_COUNT: int = 10
 
 
-# @cache_page(20, key_prefix='index_posts')
+@cache_page(20, key_prefix='index_posts')
 def index(request):
     """Функция обработки запроса к главной странице"""
 

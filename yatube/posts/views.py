@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from .forms import PostForm, CommentForm
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
 
 User = get_user_model()
 

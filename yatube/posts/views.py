@@ -6,12 +6,14 @@ from django.contrib.auth import get_user_model
 from .forms import PostForm, CommentForm
 from django.core.cache import cache
 from django.core.cache.utils import make_template_fragment_key
+from django.views.decorators.cache import cache_page
 
 User = get_user_model()
 
 POSTS_COUNT: int = 10
 
 
+@cache_page(20, key_prefix='index_posts')
 def index(request):
     """Функция обработки запроса к главной странице"""
 
@@ -57,7 +59,7 @@ def profile(request, username):
     posts_count = paginator.count
     following = (
         request.user.is_authenticated
-        and Follow.objects.filter(user=request.user).filter(author=author).exists()
+        and Follow.objects.filter(user=request.user, author=author).exists()
     )
 
     context = {
@@ -65,6 +67,7 @@ def profile(request, username):
         'posts_count': posts_count,
         'author': author,
         'following': following,
+        'username': request.user,
     }
     return render(request, template, context)
 
@@ -143,6 +146,7 @@ def add_comment(request, post_id):
         comment.post = post
         comment.save()
     return redirect('posts:post_detail', post_id=post_id)
+
 
 @login_required
 def follow_index(request):

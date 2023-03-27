@@ -188,5 +188,6 @@ class StaticURLTests(TestCase):
         }
         for url, template in templates_url.items():
             with self.subTest(url=url):
+                cache.clear()
                 response = self.post_author.get(url)
                 self.assertTemplateUsed(response, template)

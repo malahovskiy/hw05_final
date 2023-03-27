@@ -65,6 +65,7 @@ class PostsPagesTests(TestCase):
         self.random_user.force_login(self.RandomUser)
         self.follower = Client()
         self.follower.force_login(self.Follower)
+        cache.clear()
 
     def test_new_post_on_right_places(self):
         '''Проверка того, что новый пост появляется на правильных местах'''
@@ -338,7 +339,7 @@ class PaginatorViewsTest(TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        super().tearDownClass()        
+        super().tearDownClass()
         cache.clear()
 
     def test_first_page_contains_ten_records(self):

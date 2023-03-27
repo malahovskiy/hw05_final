@@ -70,10 +70,12 @@ class StaticURLTests(TestCase):
 
         for url in guest_allowed_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.guest.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
         for url in guest_redirect_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.guest.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
@@ -99,10 +101,12 @@ class StaticURLTests(TestCase):
         )
         for url in random_user_allowed_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.random_user.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
         for url in random_user_redirect_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.random_user.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
@@ -127,10 +131,12 @@ class StaticURLTests(TestCase):
         }
         for url in post_author_allowed_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.post_author.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
         for url in post_author_redirect_urls:
             with self.subTest(url=url):
+                cache.clear()
                 response = self.random_user.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.FOUND)
 

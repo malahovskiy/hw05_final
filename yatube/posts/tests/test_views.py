@@ -81,6 +81,7 @@ class PostsPagesTests(TestCase):
             image=self.uploaded,
         )
         # Появился на главной странице
+        cache.clear()
         response_index = self.random_user.get(reverse('posts:index'))
         self.assertIn(
             test_post,
@@ -88,6 +89,7 @@ class PostsPagesTests(TestCase):
             'Поста нет на главной странице'
         )
         # Появился в нужной группе
+        cache.clear()
         response_group = self.random_user.get(
             reverse(
                 viewname='posts:group_list',
@@ -100,6 +102,7 @@ class PostsPagesTests(TestCase):
             'Поста нет в нужной группе'
         )
         # На станице другой группы не появился
+        cache.clear()
         response_other_group = self.random_user.get(
             reverse(
                 viewname='posts:group_list',
@@ -112,6 +115,7 @@ class PostsPagesTests(TestCase):
             'Пост появился в другой группе'
         )
         # Появился у подписчика
+        cache.clear()
         response_follow = self.follower.get(
             reverse(
                 viewname='posts:follow_index'
@@ -123,6 +127,7 @@ class PostsPagesTests(TestCase):
             'Поста нет у подписчика'
         )
         # Не появился у других
+        cache.clear()
         response_follow = self.random_user.get(
             reverse(
                 viewname='posts:follow_index'
@@ -188,6 +193,7 @@ class PostsPagesTests(TestCase):
         }
         for url, template in templates_url.items():
             with self.subTest(url=url):
+                cache.clear()
                 response = self.post_author.get(url)
                 self.assertTemplateUsed(
                     response,
@@ -216,6 +222,7 @@ class PostsPagesTests(TestCase):
         }
         for url, template in templates_url.items():
             with self.subTest(template):
+                cache.clear()
                 response = self.guest.get(url)
                 self.assertTemplateUsed(
                     response,
@@ -300,6 +307,7 @@ class PostsPagesTests(TestCase):
         }
         for reverse_page in context:
             with self.subTest(reverse_page=reverse_page):
+                cache.clear()
                 response = self.post_author.get(reverse_page)
                 self.assertIsInstance(
                     response.context['form'].fields['text'],
@@ -335,6 +343,7 @@ class PaginatorViewsTest(TestCase):
         Post.objects.bulk_create(post_list)
 
     def setUp(self):
+        cache.clear()
         self.user = Client()
 
     @classmethod

@@ -2,12 +2,10 @@
 {% block title %}
   Подписки
 {% endblock title %}
-{% load cache %}
 {% block content %}
   <div class="container">
-    {% include 'posts/includes/switcher.html '%}
+    {% include 'posts/includes/switcher.html' %}
     <h1>Последние обновления в подписках</h1>
-    {% cache 20 follow_posts %}
     {% for post in page_obj %}
       <div class="border border-5 rounded bg-light">
         <div class="border border-light border-5 ">
@@ -17,6 +15,5 @@
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
   {% include 'posts/includes/paginator.html' %}
-  {% endcache %} 
   </div class="container">
 {% endblock content %}

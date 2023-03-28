@@ -2,10 +2,9 @@
 {% block title %}
   Главная страница
 {% endblock title %}
-
 {% block content %}
   <div class="container">
-    {% include 'posts/includes/switcher.html '%}
+    {% include 'posts/includes/switcher.html' %}
     <h1>Последние обновления на сайте</h1>    
       {% for post in page_obj %}
         <div class="border border-5 rounded bg-light">
@@ -16,6 +15,5 @@
         {% if not forloop.last %}<hr>{% endif %}
       {% endfor %}
       {% include 'posts/includes/paginator.html' %}     
-  </div class="container">
-  
+  </div class="container">  
 {% endblock content %}

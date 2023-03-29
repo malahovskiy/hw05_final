@@ -58,7 +58,6 @@ class StaticURLTests(TestCase):
             reverse(
                 'posts:post_edit',
                 kwargs={'post_id': self.post.pk}),
-
             reverse(
                 'posts:profile_follow',
                 kwargs={'username': self.PostAuthor.username}),
@@ -191,6 +190,7 @@ class StaticURLTests(TestCase):
                 kwargs={'post_id': self.post.pk}
             ): 'posts/create_post.html',
             '/some-random-url/': 'core/404.html',
+
         }
         for url, template in templates_url.items():
             with self.subTest(url=url):

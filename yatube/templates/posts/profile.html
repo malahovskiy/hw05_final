@@ -3,17 +3,17 @@
   Профайл пользователя {{ author.get_full_name }}
 {% endblock title %}
 {% block content %}
-  <div class="container">
+  <div class="container mb-5">
     <h1>Все посты пользователя: {{ full_name }}</h1>
     <h3>Всего постов: {{ posts_count }}</h3>
     {% if username != author.username %}
       {% if following %}
-      <a
-        class="btn btn-lg btn-light"
-        href="{% url 'posts:profile_unfollow' author.username %}" role="button"
-      >
-        Отписаться
-      </a>
+        <a
+          class="btn btn-lg btn-light"
+          href="{% url 'posts:profile_unfollow' author.username %}" role="button"
+        >
+          Отписаться
+        </a>
       {% else %}
         <a
           class="btn btn-lg btn-primary"
@@ -32,5 +32,5 @@
       {% if not forloop.last %}<hr>{% endif %}
     {% endfor %}
     {% include 'posts/includes/paginator.html' %}
-  </div class="container">
+  </div>
 {% endblock content %}

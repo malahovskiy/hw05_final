@@ -140,14 +140,50 @@ class PostsPagesTests(TestCase):
         )
 
     def test_follow_user(self):
-        self.random_user.get(
+        response = self.random_user.get(
             reverse('posts:profile_follow',
-                    kwargs={'username': self.PostAuthor.username}
+                    kwargs={'username': self.PostAuthor}
                     )
         )
         self.assertTrue(
             Follow.objects.filter(
-                user=self.RandomUser).filter(author=self.PostAuthor)
+                user=self.RandomUser,
+                author=self.PostAuthor
+            )
+        )
+        self.assertRedirects(
+            response,
+            reverse('posts:profile', kwargs={'username': self.PostAuthor})
+        )
+
+    def test_unfollow_user(self):
+        response = self.random_user.get(
+            reverse('posts:profile_unfollow',
+                    kwargs={'username': self.PostAuthor}
+                    )
+        )
+        self.assertTrue(
+            not Follow.objects.filter(
+                user=self.RandomUser,
+                author=self.PostAuthor
+            ).exists()
+        )
+        self.assertRedirects(
+            response,
+            reverse('posts:follow_index')
+        )
+
+    def test_selffollow_user(self):
+        self.post_author.get(
+            reverse('posts:profile_follow',
+                    kwargs={'username': self.PostAuthor.username}
+                    )
+        )
+        self.assertFalse(
+            Follow.objects.filter(
+                user=self.PostAuthor,
+                author=self.PostAuthor
+            ).exists()
         )
 
     def test_follow_guest(self):
@@ -163,6 +199,58 @@ class PostsPagesTests(TestCase):
             + reverse(
                 viewname='posts:profile_follow',
                 kwargs={'username': self.PostAuthor.username}
+            )
+        )
+
+    def test_unfollow_guest(self):
+        response = self.guest.get(
+            reverse('posts:profile_unfollow',
+                    kwargs={'username': self.PostAuthor}
+                    )
+        )
+        self.assertFalse(
+            Follow.objects.filter(
+                user=self.RandomUser,
+                author=self.PostAuthor
+            ).exists()
+        )
+        self.assertRedirects(
+            response,
+            reverse('users:login')
+            + '?next='
+            + reverse(
+                viewname='posts:profile_unfollow',
+                kwargs={'username': self.PostAuthor.username}
+            )
+        )
+
+    def test_comment_user(self):
+        response = self.random_user.get(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk})
+        )
+        self.assertRedirects(
+            response,
+            reverse('posts:post_detail', kwargs={'post_id': self.post.pk}))
+
+    def test_comment_author(self):
+        response = self.post_author.get(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk})
+        )
+        self.assertRedirects(
+            response,
+            reverse('posts:post_detail', kwargs={'post_id': self.post.pk}))
+
+    def test_comment_guest(self):
+        response = self.guest.get(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk})
+        )
+        self.assertRedirects(
+            response,
+            reverse('users:login')
+            + '?next='
+            + reverse(
+                viewname='posts:add_comment',
+                kwargs={'post_id': self.post.pk}
             )
         )
 
@@ -190,6 +278,9 @@ class PostsPagesTests(TestCase):
                 viewname='posts:post_edit',
                 kwargs={'post_id': self.post.pk}
             ): 'posts/create_post.html',
+            reverse(
+                viewname='posts:follow_index',
+            ): 'posts/follow.html',
         }
         for url, template in templates_url.items():
             with self.subTest(url=url):
@@ -218,7 +309,6 @@ class PostsPagesTests(TestCase):
                 viewname='posts:post_detail',
                 kwargs={'post_id': self.post.pk}
             ): 'posts/post_detail.html',
-
         }
         for url, template in templates_url.items():
             with self.subTest(template):
@@ -352,19 +442,19 @@ class PaginatorViewsTest(TestCase):
         cache.clear()
 
     def test_first_page_contains_ten_records(self):
+        FIRST_PAGE_POST_COUNT: int = 10  # Количество постов на первой странице
         response = self.user.get(reverse('posts:index'))
-        # Проверка: количество постов на первой странице равно 10.
         self.assertEqual(
             len(response.context['page_obj']),
-            10,
+            FIRST_PAGE_POST_COUNT,
             'Неправильное количество элементов на странице'
         )
 
     def test_second_page_contains_three_records(self):
-        # Проверка: на второй странице должно быть три поста.
+        SECOND_PAGE_POST_COUNT: int = 3  # Количество постов на второй странице
         response = self.user.get(reverse('posts:index') + '?page=2')
         self.assertEqual(
             len(response.context['page_obj']),
-            3,
+            SECOND_PAGE_POST_COUNT,
             'Неправильное количество элементов на странице'
         )

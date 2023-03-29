@@ -215,11 +215,17 @@ class CommentCreateFormTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.TestUser = User.objects.create_user(username='user')
+        cls.PostAuthor = User.objects.create_user(username='PostAuthor')
+        cls.RandomUser = User.objects.create_user(username='RandomUser')
         cls.TestGroup = Group.objects.create(
             title='Тестовая группа',
             description='Тестовое описание',
             slug='test_slug'
+        )
+        cls.post = Post.objects.create(
+            text='Тестовый текст',
+            author=cls.PostAuthor,
+            group=cls.TestGroup
         )
 
     @classmethod
@@ -228,49 +234,41 @@ class CommentCreateFormTests(TestCase):
         shutil.rmtree(TEMP_MEDIA_ROOT, ignore_errors=True)
 
     def setUp(self):
-        self.guest_client = Client()
-        self.authorized_client = Client()
-        self.authorized_client.force_login(self.TestUser)
+        self.guest = Client()
+        self.post_author = Client()
+        self.post_author.force_login(self.PostAuthor)
+        self.random_user = Client()
+        self.random_user.force_login(self.RandomUser)
 
-    def test_comment_add_user(self):
-        post = Post.objects.create(
-            text='Тестовый текст',
-            author=self.TestUser,
-            group=self.TestGroup
-        )
+    def test_comment_add_random_user(self):
         form_data = {
-            'post': post,
-            'author': self.authorized_client,
+            'post': self.post,
+            'author': self.RandomUser,
             'text': 'Тестовый комментарий',
         }
         comment_count = Comment.objects.count()
-        self.authorized_client.post(
-            reverse('posts:add_comment', kwargs={'post_id': post.pk}),
+        self.random_user.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
             data=form_data,
             follow=True
         )
         self.assertTrue(
             (Comment.objects.filter(
-                post=post,
-                author=self.TestUser,
+                post=self.post,
+                author=self.RandomUser,
                 text=form_data['text']).exists())
             and (Comment.objects.count() == comment_count + 1)
         )
 
     def test_comment_add_guest(self):
-        post = Post.objects.create(
-            text='Тестовый текст',
-            author=self.TestUser,
-            group=self.TestGroup
-        )
         form_data = {
-            'post': post,
-            'author': self.authorized_client,
+            'post': self.post,
+            'author': self.guest,
             'text': 'Тестовый комментарий',
         }
         comment_count = Comment.objects.count()
-        response = self.guest_client.post(
-            reverse('posts:add_comment', kwargs={'post_id': post.pk}),
+        response = self.guest.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
             data=form_data,
             follow=True
         )
@@ -278,13 +276,33 @@ class CommentCreateFormTests(TestCase):
             response,
             reverse('users:login')
             + '?next='
-            + reverse('posts:add_comment', kwargs={'post_id': post.pk}))
+            + reverse('posts:add_comment', kwargs={'post_id': self.post.pk}))
 
         self.assertTrue(
             not Comment.objects.filter(
-                post=post,
-                author=self.TestUser,
-                text=post.text).exists()
-            and Comment.objects.count() == comment_count
+                post=self.post,
+                text=form_data['text']).exists()
+            and (Comment.objects.count() == comment_count)
+        )
 
+    def test_comment_add_author(self):
+        form_data = {
+            'post': self.post,
+            'author': self.PostAuthor,
+            'text': 'Тестовый комментарий',
+        }
+        comment_count = Comment.objects.count()
+
+        self.post_author.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.pk}),
+            data=form_data,
+            follow=True
+        )
+
+        self.assertTrue(
+            Comment.objects.filter(
+                post=self.post,
+                author=self.PostAuthor,
+                text=form_data['text']).exists()
+            and (Comment.objects.count() == comment_count + 1)
         )

@@ -41,11 +41,11 @@
       </div>
       <div class="col-9 border border-5 bg-light ">
         <ul class="list-group list-group-flush bg-light">
-            {% if post.image %}
-              {% thumbnail post.image "1920x1080" format="PNG" upscale=True as im %}
-                <img class="list-group-item my-2 bg-light" src="{{ im.url }}">
-              {% endthumbnail %}        
-            {% endif %}          
+          {% if post.image %}
+            {% thumbnail post.image "1920x1080" format="PNG" upscale=True as im %}
+              <img class="list-group-item my-2 bg-light" src="{{ im.url }}">
+            {% endthumbnail %}        
+          {% endif %}          
           <div class='card-text list-group-item bg-light'>
             {{ post.text|linebreaksbr }}
           </div>

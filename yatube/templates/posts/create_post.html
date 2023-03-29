@@ -35,7 +35,7 @@
                     <p class="text-danger">{{ error }}</p>
                   {% endfor %}                  
                   {% for error in form.non_field_errors %}
-                      {{ error }}
+                    {{ error }}
                   {% endfor %}
                   {% if field.help_text %}
                     <small id="{{ field.id_for_label }}-help" class="form-text text-muted">
